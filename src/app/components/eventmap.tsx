@@ -3,6 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEventContext } from "@/app/context/eventcontext"; // Importar el hook para acceder al contexto
 import L from "leaflet";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable"; // Importar autoTable
 
 // Crear ícono personalizado para los marcadores
 const createCustomIcon = (size: number) =>
@@ -13,24 +15,96 @@ const createCustomIcon = (size: number) =>
   });
 
 // Componente para centrar el mapa
-function SetMapCenter({ lat, lng }: { lat: number; lng: number }) {
+function SetMapCenter({
+  lat,
+  lng,
+  zoom,
+}: {
+  lat: number;
+  lng: number;
+  zoom: number;
+}) {
   const map = useMap();
 
   useEffect(() => {
     if (lat && lng) {
-      map.setView([lat, lng], 13); // Centramos el mapa en las coordenadas dadas con zoom 13
+      map.setView([lat, lng], zoom); // Centramos el mapa en las coordenadas dadas con el zoom
     }
-  }, [lat, lng, map]);
+  }, [lat, lng, zoom, map]);
 
   return null; // Este componente no necesita renderizar nada
 }
 
 export default function EventMap({
   center,
+  zoom,
+  startDate,
+  endDate,
 }: {
   center: { lat: number; lng: number };
+  zoom: number;
+  startDate: Date | null;
+  endDate: Date | null;
 }) {
-  const { events, loading, error } = useEventContext();
+  const { events, loading, error, removeEvent } = useEventContext(); // Usar eventos del contexto
+
+  // Filtrar eventos por rango de fechas
+  const filteredEvents = events.filter((event) => {
+    const eventDate = new Date(event.fecha);
+    if (startDate && endDate) {
+      return eventDate >= startDate && eventDate <= endDate;
+    }
+    return true; // Si no hay fechas, devolver todos los eventos
+  });
+
+  const handleDeleteEvent = async (eventId: string) => {
+    const confirmed = window.confirm("¿Estás seguro de eliminar este evento?");
+    if (!confirmed) return;
+
+    try {
+      await fetch(`/api/eventos/${eventId}`, {
+        method: "DELETE",
+      });
+      removeEvent(eventId);
+    } catch (error) {
+      console.error("Error al eliminar el evento:", error);
+    }
+  };
+
+  // Función para generar y descargar el PDF con tabla
+  const handleDownloadPDF = (event: any) => {
+    const doc = new jsPDF();
+
+    // Título del documento
+    doc.setFontSize(18);
+    doc.text("Detalles del Evento", 10, 10);
+
+    // Datos del evento en una tabla
+    autoTable(doc, {
+      head: [["Campo", "Valor"]],
+      body: [
+        ["Evento", event.evento],
+        ["Causa", event.causa],
+        ["Magnitud", event.magnitud],
+        ["Ubicación Sector", event.ubicacionSector],
+        ["Afectaciones", event.afectaciones],
+        ["Descripción Afectación", event.descripcionAfectacion],
+        ["Tipo de Manejo", event.tipoManejo],
+        ["Tipo de Atención", event.tipoAtencion],
+        ["Atención a la Emergencia", event.atencionEmergencia],
+        ["Estado del Evento", event.estadoEvento],
+        ["Fecha", new Date(event.fecha).toLocaleDateString()],
+        ["Latitud", event.latitud],
+        ["Longitud", event.longitud],
+      ],
+      startY: 20, // Define el inicio de la tabla
+      theme: "striped", // Tema de tabla (puede cambiarse a 'grid', 'plain', etc.)
+      styles: { fontSize: 12 }, // Tamaño de la fuente en la tabla
+      headStyles: { fillColor: [22, 160, 133] }, // Color del encabezado (opcional)
+    });
+
+    doc.save(`Evento_${event._id}.pdf`);
+  };
 
   if (loading) return <p>Cargando eventos...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -39,7 +113,7 @@ export default function EventMap({
     <div className="h-screen w-full">
       <MapContainer
         center={[4.570868, -74.297333]} // Coordenadas iniciales (Bogotá, Colombia)
-        zoom={2}
+        zoom={zoom} // Utiliza el zoom recibido por props
         className="h-full w-full"
       >
         <TileLayer
@@ -48,13 +122,13 @@ export default function EventMap({
         />
 
         {/* Componente que centra el mapa en las coordenadas */}
-        <SetMapCenter lat={center.lat} lng={center.lng} />
+        <SetMapCenter lat={center.lat} lng={center.lng} zoom={zoom} />
 
-        {events.map((event) => (
+        {filteredEvents.map((event) => (
           <Marker
             key={event._id}
             position={[event.latitud, event.longitud]}
-            icon={createCustomIcon(20)} // Tamaño inicial
+            icon={createCustomIcon(20)}
             eventHandlers={{
               mouseover: (e) => {
                 e.target.setIcon(createCustomIcon(30)); // Aumentar el tamaño al pasar el mouse
@@ -66,7 +140,7 @@ export default function EventMap({
           >
             <Popup>
               <div className="text-sm">
-                <h3 className="font-bold">{event.evento}</h3>
+                <h3 className="font-bold text-yellow-600">{event.evento}</h3>
                 <p>
                   <strong>Causa:</strong> {event.causa}
                 </p>
@@ -83,6 +157,22 @@ export default function EventMap({
                   <strong>Fecha:</strong>{" "}
                   {new Date(event.fecha).toLocaleDateString()}
                 </p>
+
+                {/* Botón para descargar el evento en PDF */}
+                <button
+                  onClick={() => handleDownloadPDF(event)}
+                  className="bg-teal-500 text-white px-2 py-1 mt-2 mr-2 rounded hover:bg-teal-700"
+                >
+                  Descargar PDF
+                </button>
+
+                {/* Botón para eliminar el evento */}
+                <button
+                  onClick={() => handleDeleteEvent(event._id)}
+                  className="bg-red-500 text-white px-2 py-1 mt-2 rounded hover:bg-red-700"
+                >
+                  Eliminar Evento
+                </button>
               </div>
             </Popup>
           </Marker>

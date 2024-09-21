@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { useEventContext } from "@/app/context/eventcontext"; // Asegúrate de importar el contexto
+import { useEventContext } from "@/app/context/eventcontext";
 
 export default function CreateEventForm({
   onEventCreated,
   closeForm,
 }: {
   onEventCreated: (lat: number, lng: number) => void;
-  closeForm: () => void; // Función para cerrar el formulario
+  closeForm: () => void;
 }) {
-  const { addEvent } = useEventContext(); // Usar el contexto para agregar un nuevo evento
+  const { addEvent } = useEventContext();
   const [formData, setFormData] = useState({
     evento: "",
     longitud: "",
@@ -24,15 +24,46 @@ export default function CreateEventForm({
     estadoEvento: "",
     fecha: "",
   });
-  const [message, setMessage] = useState(""); // Estado para mostrar el mensaje de éxito
+  const [errorMessage, setErrorMessage] = useState(""); // Estado para los errores
+  const [successMessage, setSuccessMessage] = useState(""); // Estado para el mensaje de éxito
 
+  // Función para manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // Validar latitud y longitud
+    const lat = parseFloat(formData.latitud);
+    const lng = parseFloat(formData.longitud);
+
+    // Validar campos obligatorios y seleccionables
+    if (
+      !formData.evento ||
+      isNaN(lat) ||
+      isNaN(lng) ||
+      !formData.causa ||
+      !formData.magnitud ||
+      !formData.tipoManejo ||
+      !formData.tipoAtencion
+    ) {
+      setErrorMessage(
+        "Por favor, complete todos los campos obligatorios y seleccione opciones válidas."
+      );
+      return;
+    }
+
     const newEvent = {
-      ...formData,
-      longitud: parseFloat(formData.longitud),
-      latitud: parseFloat(formData.latitud),
+      evento: formData.evento || "",
+      longitud: lng,
+      latitud: lat,
+      causa: formData.causa || "",
+      ubicacionSector: formData.ubicacionSector || "",
+      magnitud: formData.magnitud || "",
+      afectaciones: formData.afectaciones || "",
+      descripcionAfectacion: formData.descripcionAfectacion || "",
+      tipoManejo: formData.tipoManejo || "",
+      tipoAtencion: formData.tipoAtencion || "",
+      atencionEmergencia: formData.atencionEmergencia || "",
+      estadoEvento: formData.estadoEvento || "",
       fecha: formData.fecha ? new Date(formData.fecha) : "",
     };
 
@@ -48,23 +79,24 @@ export default function CreateEventForm({
       const result = await response.json();
       console.log("Evento creado:", result);
 
-      // Añadimos el evento recién creado al contexto
+      // Añadir el nuevo evento al contexto
       addEvent(result);
 
-      // Llamamos a la función para centrar el mapa en las coordenadas del nuevo evento
-      onEventCreated(
-        parseFloat(formData.latitud),
-        parseFloat(formData.longitud)
-      );
+      // Centrar el mapa en las coordenadas del nuevo evento
+      onEventCreated(lat, lng);
 
-      // Mostrar el mensaje de éxito y cerrar el formulario después de 2 segundos
-      setMessage("Evento creado con éxito");
+      // Mostrar el mensaje de éxito
+      setSuccessMessage("Evento creado con éxito");
+      setErrorMessage(""); // Limpiar cualquier error previo
+
+      // Cerrar el formulario después de 2 segundos
       setTimeout(() => {
-        setMessage(""); // Limpiar el mensaje
+        setSuccessMessage(""); // Limpiar el mensaje de éxito
         closeForm(); // Cerrar el formulario
       }, 2000);
     } catch (error) {
       console.error("Error al crear evento:", error);
+      setErrorMessage("Error al crear el evento, intente de nuevo.");
     }
   };
 
@@ -76,8 +108,15 @@ export default function CreateEventForm({
       [e.target.name]: e.target.value,
     });
   };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4 p-4 w-full">
+      {/* Mostrar mensaje de error si lo hay */}
+      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+
+      {/* Mostrar mensaje de éxito si lo hay */}
+      {successMessage && <p className="text-green-500">{successMessage}</p>}
+
       {/* Campo obligatorio: Evento */}
       <div>
         <label htmlFor="evento" className="block text-sm font-medium">
@@ -126,7 +165,7 @@ export default function CreateEventForm({
         />
       </div>
 
-      {/* Campo opcional: Causa (select) */}
+      {/* Campo obligatorio: Causa (select) */}
       <div>
         <label htmlFor="causa" className="block text-sm font-medium">
           Causa
@@ -137,6 +176,7 @@ export default function CreateEventForm({
           value={formData.causa}
           onChange={handleChange}
           className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+          required
         >
           <option value="">Seleccione una causa</option>
           <option value="Lluvias intensas">Lluvias intensas</option>
@@ -166,7 +206,7 @@ export default function CreateEventForm({
         />
       </div>
 
-      {/* Campo opcional: Magnitud (select) */}
+      {/* Campo obligatorio: Magnitud (select) */}
       <div>
         <label htmlFor="magnitud" className="block text-sm font-medium">
           Magnitud
@@ -177,6 +217,7 @@ export default function CreateEventForm({
           value={formData.magnitud}
           onChange={handleChange}
           className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+          required
         >
           <option value="">Seleccione la magnitud</option>
           <option value="Baja">Baja</option>
@@ -219,7 +260,7 @@ export default function CreateEventForm({
         />
       </div>
 
-      {/* Campo opcional: Tipo de Manejo (select) */}
+      {/* Campo obligatorio: Tipo de Manejo (select) */}
       <div>
         <label htmlFor="tipoManejo" className="block text-sm font-medium">
           Tipo de Manejo
@@ -230,6 +271,7 @@ export default function CreateEventForm({
           value={formData.tipoManejo}
           onChange={handleChange}
           className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+          required
         >
           <option value="">Seleccione el tipo de manejo</option>
           <option value="Local">Local</option>
@@ -240,7 +282,7 @@ export default function CreateEventForm({
         </select>
       </div>
 
-      {/* Campo opcional: Tipo de Atención (select) */}
+      {/* Campo obligatorio: Tipo de Atención (select) */}
       <div>
         <label htmlFor="tipoAtencion" className="block text-sm font-medium">
           Tipo de Atención
@@ -251,6 +293,7 @@ export default function CreateEventForm({
           value={formData.tipoAtencion}
           onChange={handleChange}
           className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+          required
         >
           <option value="">Seleccione el tipo de atención</option>
           <option value="Emergencia">Emergencia</option>
@@ -310,6 +353,7 @@ export default function CreateEventForm({
         />
       </div>
 
+      {/* Botón para crear evento */}
       <button
         type="submit"
         className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
