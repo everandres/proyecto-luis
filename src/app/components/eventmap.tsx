@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEventContext } from "@/app/context/eventcontext"; // Importar el hook para acceder al contexto
@@ -34,6 +34,47 @@ function SetMapCenter({
   }, [lat, lng, zoom, map]);
 
   return null; // Este componente no necesita renderizar nada
+}
+
+// Componente para mostrar coordenadas en el mapa
+function ShowCoordinates() {
+  const map = useMap();
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
+    null
+  );
+
+  useEffect(() => {
+    const handleMouseMove = (e: L.LeafletMouseEvent) => {
+      setCoords({
+        lat: e.latlng.lat,
+        lng: e.latlng.lng,
+      });
+    };
+
+    map.on("mousemove", handleMouseMove);
+
+    return () => {
+      map.off("mousemove", handleMouseMove);
+    };
+  }, [map]);
+
+  return (
+    coords && (
+      <div
+        style={{
+          position: "absolute",
+          bottom: "10px",
+          right: "10px",
+          backgroundColor: "rgba(255, 255, 255, 0.8)",
+          padding: "5px",
+          borderRadius: "5px",
+          zIndex: 1000,
+        }}
+      >
+        Lat: {coords.lat.toFixed(5)}, Lng: {coords.lng.toFixed(5)}
+      </div>
+    )
+  );
 }
 
 export default function EventMap({
@@ -126,6 +167,9 @@ export default function EventMap({
         {/* Componente que centra el mapa en las coordenadas */}
         <SetMapCenter lat={center.lat} lng={center.lng} zoom={zoom} />
 
+        {/* Componente que muestra las coordenadas bajo el cursor */}
+        <ShowCoordinates />
+
         {filteredEvents.map((event) => (
           <Marker
             key={event._id}
@@ -151,9 +195,6 @@ export default function EventMap({
                 </p>
                 <p>
                   <strong>Ubicación:</strong> {event.ubicacionSector}
-                </p>
-                <p>
-                  <strong>Afectaciones:</strong> {event.afectaciones}
                 </p>
                 <p>
                   {/* Mostrar la URL de la imagen o el texto "No hay imagen" si está vacío */}
