@@ -12,7 +12,7 @@ const EventMap = dynamic(() => import("@/app/components/eventmap"), {
 });
 
 const Page: React.FC = () => {
-  const { events, loading, error, resetFilters } = useEventContext(); // Asegúrate de usar resetFilters del contexto
+  const { loading, error, resetFilters } = useEventContext(); // Asegúrate de usar resetFilters del contexto
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({
     lat: 4.60971, // Coordenadas iniciales de Bogotá
     lng: -74.083252,

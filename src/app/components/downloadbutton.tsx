@@ -1,4 +1,4 @@
-import { useEventContext, Event } from "@/app/context/eventcontext"; // Importar el contexto y el tipo Event
+import { useEventContext } from "@/app/context/eventcontext"; // Importar el contexto y el tipo Event
 
 interface DownloadCSVButtonProps {
   startDate: Date | null; // Pasar la fecha de inicio como prop

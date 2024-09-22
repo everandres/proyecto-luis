@@ -1,4 +1,4 @@
-import mongoose, { Model, Schema } from "mongoose";
+import mongoose, { Model } from "mongoose";
 import { IEvent } from "./IEvent";
 
 const EventSchema = new mongoose.Schema({

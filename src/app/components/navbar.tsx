@@ -17,8 +17,6 @@ export default function Navbar({
   startDate: Date | null;
   endDate: Date | null;
 }) {
-  const { filteredEvents } = useEventContext(); // Obtener los eventos filtrados del contexto
-
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
 

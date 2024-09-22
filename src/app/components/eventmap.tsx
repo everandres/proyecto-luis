@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEventContext } from "@/app/context/eventcontext"; // Importar el hook para acceder al contexto
+import { Event } from "@/app/context/eventcontext";
 import L from "leaflet";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable"; // Importar autoTable
@@ -72,7 +73,7 @@ export default function EventMap({
   };
 
   // Función para generar y descargar el PDF con tabla
-  const handleDownloadPDF = (event: any) => {
+  const handleDownloadPDF = (event: Event) => {
     const doc = new jsPDF();
 
     // Título del documento
@@ -96,7 +97,7 @@ export default function EventMap({
         ["Fecha", new Date(event.fecha).toLocaleDateString()],
         ["Latitud", event.latitud],
         ["Longitud", event.longitud],
-        ["URL", event.url],
+        ["URL", event.url ?? "No disponible"],
       ],
       startY: 20, // Define el inicio de la tabla
       theme: "striped", // Tema de tabla (puede cambiarse a 'grid', 'plain', etc.)
