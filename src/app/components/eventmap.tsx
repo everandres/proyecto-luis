@@ -1,5 +1,13 @@
-import { useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { useEffect, useState } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMap,
+  GeoJSON,
+  LayersControl,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEventContext } from "@/app/context/eventcontext"; // Importar el hook para acceder al contexto
 import L from "leaflet";
@@ -47,6 +55,7 @@ export default function EventMap({
   endDate: Date | null;
 }) {
   const { events, loading, error, removeEvent } = useEventContext(); // Usar eventos del contexto
+  const [geoJSONData, setGeoJSONData] = useState<any[]>([]); // Guardar los geojson cargados
 
   // Filtrar eventos por rango de fechas
   const filteredEvents = events.filter((event) => {
@@ -96,6 +105,7 @@ export default function EventMap({
         ["Fecha", new Date(event.fecha).toLocaleDateString()],
         ["Latitud", event.latitud],
         ["Longitud", event.longitud],
+        ["URL", event.url],
       ],
       startY: 20, // Define el inicio de la tabla
       theme: "striped", // Tema de tabla (puede cambiarse a 'grid', 'plain', etc.)
@@ -124,6 +134,7 @@ export default function EventMap({
         {/* Componente que centra el mapa en las coordenadas */}
         <SetMapCenter lat={center.lat} lng={center.lng} zoom={zoom} />
 
+        {/* Añadir los eventos filtrados */}
         {filteredEvents.map((event) => (
           <Marker
             key={event._id}
@@ -154,6 +165,20 @@ export default function EventMap({
                   <strong>Afectaciones:</strong> {event.afectaciones}
                 </p>
                 <p>
+                  <strong>Imagen:</strong>{" "}
+                  {event.url ? (
+                    <a
+                      href={event.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Ver Imagen
+                    </a>
+                  ) : (
+                    "No hay imagen"
+                  )}
+                </p>
+                <p>
                   <strong>Fecha:</strong>{" "}
                   {new Date(event.fecha).toLocaleDateString()}
                 </p>
@@ -165,7 +190,6 @@ export default function EventMap({
                 >
                   Descargar PDF
                 </button>
-
                 {/* Botón para eliminar el evento */}
                 <button
                   onClick={() => handleDeleteEvent(event._id)}

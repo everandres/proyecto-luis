@@ -15,7 +15,10 @@ const EventSchema = new mongoose.Schema({
   atencionEmergencia: { type: String, required: true },
   estadoEvento: { type: String, required: true },
   fecha: { type: Date, required: true }, // Campo 'fecha' requerido y de tipo Date
+  url: { type: String, required: false }, // Nueva llave 'url' de tipo String
 });
+
 const Event: Model<IEvent> =
   mongoose.models.Event || mongoose.model<IEvent>("Event", EventSchema);
+
 export default Event;

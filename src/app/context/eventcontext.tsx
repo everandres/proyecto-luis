@@ -22,6 +22,7 @@ export interface Event {
   tipoAtencion: string;
   atencionEmergencia: string;
   estadoEvento: string;
+  url?: string;
   fecha: Date;
 }
 

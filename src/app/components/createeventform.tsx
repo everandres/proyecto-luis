@@ -23,6 +23,7 @@ export default function CreateEventForm({
     atencionEmergencia: "",
     estadoEvento: "",
     fecha: "",
+    url: "", // Nueva propiedad opcional para la URL
   });
   const [errorMessage, setErrorMessage] = useState(""); // Estado para los errores
   const [successMessage, setSuccessMessage] = useState(""); // Estado para el mensaje de éxito
@@ -65,6 +66,7 @@ export default function CreateEventForm({
       atencionEmergencia: formData.atencionEmergencia || "",
       estadoEvento: formData.estadoEvento || "",
       fecha: formData.fecha ? new Date(formData.fecha) : "",
+      url: formData.url || "", // Propiedad opcional URL
     };
 
     try {
@@ -333,6 +335,20 @@ export default function CreateEventForm({
           name="estadoEvento"
           id="estadoEvento"
           value={formData.estadoEvento}
+          onChange={handleChange}
+          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="url" className="block text-sm font-medium">
+          URL de la imagen (opcional)
+        </label>
+        <input
+          type="text"
+          name="url"
+          id="url"
+          value={formData.url}
           onChange={handleChange}
           className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
         />

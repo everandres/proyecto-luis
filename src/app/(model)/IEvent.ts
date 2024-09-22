@@ -14,4 +14,5 @@ export interface IEvent extends Document {
   atencionEmergencia: string;
   estadoEvento: string;
   fecha: Date;
+  url?: string;
 }
