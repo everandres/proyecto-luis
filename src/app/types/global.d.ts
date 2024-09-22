@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 // Aquí extendemos el tipo global de Node.js para incluir la propiedad mongoose
 declare global {
-  let mongoose: {
+  var mongoose: {
     conn: mongoose.Connection | null;
     promise: Promise<mongoose.Connection> | null;
   };
