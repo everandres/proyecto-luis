@@ -1,7 +1,6 @@
 import { useState } from "react";
 import CreateEventForm from "@/app/components/createeventform"; // Importar el formulario
 import FilterEvents from "@/app/components/filtrareventos"; // Importar el componente de filtro
-import { useEventContext } from "@/app/context/eventcontext"; // Importar el contexto de eventos
 import DownloadCSVButton from "@/app/components/downloadbutton"; // Importar el botón de descarga de CSV
 
 export default function Navbar({
