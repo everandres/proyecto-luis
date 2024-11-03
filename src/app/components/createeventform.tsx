@@ -121,7 +121,10 @@ export default function CreateEventForm({
 
       {/* Campo obligatorio: Evento */}
       <div>
-        <label htmlFor="evento" className="block text-sm font-medium">
+        <label
+          htmlFor="evento"
+          className="block text-sm text-teal-950 font-semibold"
+        >
           Evento
         </label>
         <input
@@ -137,7 +140,10 @@ export default function CreateEventForm({
 
       {/* Campo obligatorio: Latitud */}
       <div>
-        <label htmlFor="latitud" className="block text-sm font-medium">
+        <label
+          htmlFor="latitud"
+          className="block text-sm text-teal-950 font-semibold"
+        >
           Latitud
         </label>
         <input
@@ -153,7 +159,10 @@ export default function CreateEventForm({
 
       {/* Campo obligatorio: Longitud */}
       <div>
-        <label htmlFor="longitud" className="block text-sm font-medium">
+        <label
+          htmlFor="longitud"
+          className="block text-sm text-teal-950 font-semibold"
+        >
           Longitud
         </label>
         <input
@@ -169,7 +178,10 @@ export default function CreateEventForm({
 
       {/* Campo obligatorio: Causa (select) */}
       <div>
-        <label htmlFor="causa" className="block text-sm font-medium">
+        <label
+          htmlFor="causa"
+          className="block text-sm text-teal-950 font-semibold"
+        >
           Causa
         </label>
         <select
@@ -195,7 +207,10 @@ export default function CreateEventForm({
 
       {/* Campo opcional: Ubicación Sector */}
       <div>
-        <label htmlFor="ubicacionSector" className="block text-sm font-medium">
+        <label
+          htmlFor="ubicacionSector"
+          className="block text-sm text-teal-950 font-semibold"
+        >
           Ubicación Sector
         </label>
         <input
@@ -210,7 +225,10 @@ export default function CreateEventForm({
 
       {/* Campo obligatorio: Magnitud (select) */}
       <div>
-        <label htmlFor="magnitud" className="block text-sm font-medium">
+        <label
+          htmlFor="magnitud"
+          className="block text-sm text-teal-950 font-semibold"
+        >
           Magnitud
         </label>
         <select
@@ -231,7 +249,10 @@ export default function CreateEventForm({
 
       {/* Campo opcional: Afectaciones */}
       <div>
-        <label htmlFor="afectaciones" className="block text-sm font-medium">
+        <label
+          htmlFor="afectaciones"
+          className="block text-sm text-teal-950 font-semibold"
+        >
           Afectaciones
         </label>
         <input
@@ -248,7 +269,7 @@ export default function CreateEventForm({
       <div>
         <label
           htmlFor="descripcionAfectacion"
-          className="block text-sm font-medium"
+          className="block text-sm text-teal-950 font-semibold"
         >
           Descripción de la Afectación
         </label>
@@ -264,7 +285,10 @@ export default function CreateEventForm({
 
       {/* Campo obligatorio: Tipo de Manejo (select) */}
       <div>
-        <label htmlFor="tipoManejo" className="block text-sm font-medium">
+        <label
+          htmlFor="tipoManejo"
+          className="block text-sm text-teal-950 font-semibold"
+        >
           Tipo de Manejo
         </label>
         <select
@@ -286,7 +310,10 @@ export default function CreateEventForm({
 
       {/* Campo obligatorio: Tipo de Atención (select) */}
       <div>
-        <label htmlFor="tipoAtencion" className="block text-sm font-medium">
+        <label
+          htmlFor="tipoAtencion"
+          className="block text-sm text-teal-950 font-semibold"
+        >
           Tipo de Atención
         </label>
         <select
@@ -311,7 +338,7 @@ export default function CreateEventForm({
       <div>
         <label
           htmlFor="atencionEmergencia"
-          className="block text-sm font-medium"
+          className="block text-sm text-teal-950 font-semibold"
         >
           Atención a la Emergencia
         </label>
@@ -327,7 +354,10 @@ export default function CreateEventForm({
 
       {/* Campo opcional: Estado del Evento */}
       <div>
-        <label htmlFor="estadoEvento" className="block text-sm font-medium">
+        <label
+          htmlFor="estadoEvento"
+          className="block text-sm text-teal-950 font-semibold"
+        >
           Estado del Evento
         </label>
         <input
@@ -341,7 +371,10 @@ export default function CreateEventForm({
       </div>
 
       <div>
-        <label htmlFor="url" className="block text-sm font-medium">
+        <label
+          htmlFor="url"
+          className="block text-sm text-teal-950 font-semibold"
+        >
           URL de la imagen (opcional)
         </label>
         <input
@@ -356,7 +389,10 @@ export default function CreateEventForm({
 
       {/* Campo opcional: Fecha del evento */}
       <div>
-        <label htmlFor="fecha" className="block text-sm font-medium">
+        <label
+          htmlFor="fecha"
+          className="block text-sm text-teal-950 font-semibold"
+        >
           Fecha del evento
         </label>
         <input

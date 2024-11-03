@@ -14,10 +14,10 @@ const EventMap = dynamic(() => import("@/app/components/eventmap"), {
 const Page: React.FC = () => {
   const { loading, error, resetFilters } = useEventContext(); // Asegúrate de usar resetFilters del contexto
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({
-    lat: 4.60971, // Coordenadas iniciales de Bogotá
-    lng: -74.083252,
+    lat: 11.23611, // Coordenadas iniciales de Santa Marta
+    lng: -74.2016,
   });
-  const [mapZoom, setMapZoom] = useState<number>(6); // Establecemos el zoom inicial en 6
+  const [mapZoom, setMapZoom] = useState<number>(12); // Establecemos el zoom inicial en 6
   const [successMessage, setSuccessMessage] = useState(""); // Estado para el mensaje de éxito
   const [startDate, setStartDate] = useState<Date | null>(null); // Estado para la fecha de inicio
   const [endDate, setEndDate] = useState<Date | null>(null); // Estado para la fecha de fin

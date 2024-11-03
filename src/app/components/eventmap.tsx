@@ -1,21 +1,26 @@
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  GeoJSON,
+  useMap,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { useEventContext } from "@/app/context/eventcontext"; // Importar el hook para acceder al contexto
+import { useEventContext } from "@/app/context/eventcontext";
 import { Event } from "@/app/context/eventcontext";
 import L from "leaflet";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable"; // Importar autoTable
+import autoTable from "jspdf-autotable";
 
-// Crear ícono personalizado para los marcadores
 const createCustomIcon = (size: number) =>
   L.divIcon({
     className:
       "bg-red-500 rounded-full border-4 border-red-200 hover:bg-green-500 hover:border-green-200 transition-all duration-300 ease-in-out",
-    iconSize: [size, size], // Ajustar el tamaño del icono
+    iconSize: [size, size],
   });
 
-// Componente para centrar el mapa
 function SetMapCenter({
   lat,
   lng,
@@ -29,14 +34,13 @@ function SetMapCenter({
 
   useEffect(() => {
     if (lat && lng) {
-      map.setView([lat, lng], zoom); // Centramos el mapa en las coordenadas dadas con el zoom
+      map.setView([lat, lng], zoom);
     }
   }, [lat, lng, zoom, map]);
 
-  return null; // Este componente no necesita renderizar nada
+  return null;
 }
 
-// Componente para mostrar coordenadas en el mapa
 function ShowCoordinates() {
   const map = useMap();
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
@@ -88,15 +92,63 @@ export default function EventMap({
   startDate: Date | null;
   endDate: Date | null;
 }) {
-  const { events, loading, error, removeEvent } = useEventContext(); // Usar eventos del contexto
+  const { events, loading, error, removeEvent } = useEventContext();
 
-  // Filtrar eventos por rango de fechas
+  const [selectedTileMap, setSelectedTileMap] = useState(
+    "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+  );
+
+  // Estados para almacenar los datos GeoJSON y controlar visibilidad
+  const [localidadesData, setLocalidadesData] = useState(null);
+  const [limiteMunicipalData, setLimiteMunicipalData] = useState(null);
+  const [barriosData, setBarriosData] = useState(null);
+  const [showBarrios, setShowBarrios] = useState(false);
+  const [showLocalidades, setShowLocalidades] = useState(false);
+  const [showLimiteMunicipal, setShowLimiteMunicipal] = useState(true);
+
+  // Cargar los datos de GeoJSON desde la carpeta pública
+  useEffect(() => {
+    fetch("/localidades.geojson")
+      .then((response) => response.json())
+      .then((data) => setLocalidadesData(data))
+      .catch((error) =>
+        console.error("Error loading localidades GeoJSON:", error)
+      );
+
+    fetch("/limite_municipal.geojson")
+      .then((response) => response.json())
+      .then((data) => setLimiteMunicipalData(data))
+      .catch((error) =>
+        console.error("Error loading limite_municipal GeoJSON:", error)
+      );
+
+    fetch("/barrios.geojson")
+      .then((response) => response.json())
+      .then((data) => setBarriosData(data))
+      .catch((error) => console.error("Error loading barrios GeoJSON:", error));
+  }, []);
+
+  const tileMaps = {
+    "OpenStreetMap Streets":
+      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    "Stadia Outdoors":
+      "https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png",
+    "Stadia Alidade Smooth":
+      "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png",
+    "Stadia Alidade Smooth Dark":
+      "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",
+    "Esri Satellite":
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "Esri Topographic":
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+  };
+
   const filteredEvents = events.filter((event) => {
     const eventDate = new Date(event.fecha);
     if (startDate && endDate) {
       return eventDate >= startDate && eventDate <= endDate;
     }
-    return true; // Si no hay fechas, devolver todos los eventos
+    return true;
   });
 
   const handleDeleteEvent = async (eventId: string) => {
@@ -113,15 +165,11 @@ export default function EventMap({
     }
   };
 
-  // Función para generar y descargar el PDF con tabla
   const handleDownloadPDF = (event: Event) => {
     const doc = new jsPDF();
-
-    // Título del documento
     doc.setFontSize(18);
     doc.text("Detalles del Evento", 10, 10);
 
-    // Datos del evento en una tabla
     autoTable(doc, {
       head: [["Campo", "Valor"]],
       body: [
@@ -140,10 +188,10 @@ export default function EventMap({
         ["Longitud", event.longitud],
         ["URL", event.url ?? "No disponible"],
       ],
-      startY: 20, // Define el inicio de la tabla
-      theme: "striped", // Tema de tabla (puede cambiarse a 'grid', 'plain', etc.)
-      styles: { fontSize: 12 }, // Tamaño de la fuente en la tabla
-      headStyles: { fillColor: [22, 160, 133] }, // Color del encabezado (opcional)
+      startY: 20,
+      theme: "striped",
+      styles: { fontSize: 12 },
+      headStyles: { fillColor: [22, 160, 133] },
     });
 
     doc.save(`Evento_${event._id}.pdf`);
@@ -153,22 +201,70 @@ export default function EventMap({
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="h-screen w-full">
-      <MapContainer
-        center={[4.570868, -74.297333]} // Coordenadas iniciales (Bogotá, Colombia)
-        zoom={zoom} // Utiliza el zoom recibido por props
-        className="h-full w-full"
-      >
-        <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
+    <div className="h-screen w-full relative">
+      <div className="absolute bottom-4 left-4 z-[1000] bg-white p-3 rounded shadow-lg">
+        <label className="text-sm font-semibold">Seleccionar Mapa Base:</label>
+        <select
+          className="mt-1 p-1 border rounded w-full"
+          value={selectedTileMap}
+          onChange={(e) => setSelectedTileMap(e.target.value)}
+        >
+          {Object.entries(tileMaps).map(([name, url]) => (
+            <option key={name} value={url}>
+              {name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-        {/* Componente que centra el mapa en las coordenadas */}
+      {/* Controles para activar/desactivar capas */}
+      <div className="absolute bottom-40 left-4 z-[1000] bg-white p-3 rounded shadow-lg">
+        <label className="text-sm font-semibold mb-2">Capas GeoJSON:</label>
+        <div className="flex flex-col">
+          <label className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={showLocalidades}
+              onChange={() => setShowLocalidades(!showLocalidades)}
+            />
+            <span>Localidades</span>
+          </label>
+          <label className="flex items-center space-x-2 mt-2">
+            <input
+              type="checkbox"
+              checked={showLimiteMunicipal}
+              onChange={() => setShowLimiteMunicipal(!showLimiteMunicipal)}
+            />
+            <span>Límite Municipal</span>
+          </label>
+        </div>
+      </div>
+
+      <MapContainer center={center} zoom={zoom} className="h-full w-full">
+        <TileLayer url={selectedTileMap} />
+
         <SetMapCenter lat={center.lat} lng={center.lng} zoom={zoom} />
-
-        {/* Componente que muestra las coordenadas bajo el cursor */}
         <ShowCoordinates />
+
+        {/* Agregar las capas GeoJSON condicionalmente */}
+        {showLocalidades && localidadesData && (
+          <GeoJSON
+            data={localidadesData}
+            style={{ color: "blue", weight: 1.2, fillColor: "transparent" }}
+          />
+        )}
+        {showLimiteMunicipal && limiteMunicipalData && (
+          <GeoJSON
+            data={limiteMunicipalData}
+            style={{ color: "red", weight: 2, fillColor: "transparent" }}
+          />
+        )}
+        {showBarrios && barriosData && (
+          <GeoJSON
+            data={barriosData}
+            style={{ color: "green", weight: 1.2, fillColor: "transparent" }}
+          />
+        )}
 
         {filteredEvents.map((event) => (
           <Marker
@@ -176,12 +272,8 @@ export default function EventMap({
             position={[event.latitud, event.longitud]}
             icon={createCustomIcon(20)}
             eventHandlers={{
-              mouseover: (e) => {
-                e.target.setIcon(createCustomIcon(30)); // Aumentar el tamaño al pasar el mouse
-              },
-              mouseout: (e) => {
-                e.target.setIcon(createCustomIcon(20)); // Volver al tamaño original
-              },
+              mouseover: (e) => e.target.setIcon(createCustomIcon(30)),
+              mouseout: (e) => e.target.setIcon(createCustomIcon(20)),
             }}
           >
             <Popup>
@@ -197,7 +289,6 @@ export default function EventMap({
                   <strong>Ubicación:</strong> {event.ubicacionSector}
                 </p>
                 <p>
-                  {/* Mostrar la URL de la imagen o el texto "No hay imagen" si está vacío */}
                   <strong>Imagen:</strong>{" "}
                   {event.url ? (
                     <a
@@ -215,15 +306,12 @@ export default function EventMap({
                   <strong>Fecha:</strong>{" "}
                   {new Date(event.fecha).toLocaleDateString()}
                 </p>
-
-                {/* Botón para descargar el evento en PDF */}
                 <button
                   onClick={() => handleDownloadPDF(event)}
                   className="bg-teal-500 text-white px-2 py-1 mt-2 mr-2 rounded hover:bg-teal-700"
                 >
                   Descargar PDF
                 </button>
-                {/* Botón para eliminar el evento */}
                 <button
                   onClick={() => handleDeleteEvent(event._id)}
                   className="bg-red-500 text-white px-2 py-1 mt-2 rounded hover:bg-red-700"

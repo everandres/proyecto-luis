@@ -8,5 +8,10 @@ declare global {
   };
 }
 
+declare module "*.geojson" {
+  const value: any;
+  export default value;
+}
+
 // Exportar el archivo para que TypeScript lo considere un módulo
 export {};

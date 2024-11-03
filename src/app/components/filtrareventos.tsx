@@ -30,7 +30,7 @@ export default function FilterEvents({
   return (
     <form onSubmit={handleFilterSubmit} className="space-y-4">
       <div className="w-full">
-        <label className="block text-sm font-medium">
+        <label className="block text-sm text-teal-950 font-semibold">
           Seleccionar Rango de Fechas
         </label>
         <div className="flex flex-col space-y-4">
@@ -42,7 +42,7 @@ export default function FilterEvents({
             startDate={startDate}
             endDate={endDate}
             placeholderText="Fecha inicio"
-            className="mt-1 block w-full min-w-[200px] border-gray-300 rounded-md shadow-sm"
+            className="mt-1 block w-full h-full min-w-[200px] border-gray-300 rounded-md shadow-sm"
             dateFormat="yyyy-MM-dd"
           />
           {/* Calendario para seleccionar la fecha de fin */}

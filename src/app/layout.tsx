@@ -1,8 +1,8 @@
-import { Inter } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
-import { EventProvider } from "@/app/context/eventcontext"; // Asegúrate de importar el EventProvider
+import { EventProvider } from "@/app/context/eventcontext";
 
-const inter = Inter({ subsets: ["latin"] });
+const roboto = Roboto({ subsets: ["latin"], weight: ["400", "700"] });
 
 export default function RootLayout({
   children,
@@ -11,10 +11,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <EventProvider>
-          {children} {/* Los children estarán envueltos por el EventProvider */}
-        </EventProvider>
+      <body className={roboto.className}>
+        <EventProvider>{children}</EventProvider>
       </body>
     </html>
   );
