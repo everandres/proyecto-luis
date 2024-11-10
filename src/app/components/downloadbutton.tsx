@@ -64,8 +64,12 @@ export default function DownloadCSVButton({
       .map((row) => row.join(",")) // Convertir cada fila en una cadena CSV
       .join("\n"); // Unir todas las filas con un salto de línea
 
-    // Crear un blob con el contenido CSV
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    // Agregar BOM para UTF-8
+    const bom = "\uFEFF";
+    const csvData = bom + csvContent;
+
+    // Crear un blob con el contenido CSV en UTF-8 con BOM
+    const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
 
     // Crear un enlace para descargar el archivo
@@ -81,7 +85,7 @@ export default function DownloadCSVButton({
     <button
       type="button"
       onClick={handleDownloadCSV} // Función para descargar el archivo CSV
-      className="bg-emerald-500 text-white px-4 py-2 ml-2  hover:bg-cyan-900 transition"
+      className="bg-emerald-500 text-white px-4 py-2 ml-2 rounded-md hover:bg-cyan-900 transition"
     >
       Descargar Eventos
     </button>

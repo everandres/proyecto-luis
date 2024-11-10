@@ -131,16 +131,14 @@ export default function EventMap({
   const tileMaps = {
     "OpenStreetMap Streets":
       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    "Stadia Outdoors":
-      "https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png",
-    "Stadia Alidade Smooth":
-      "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png",
-    "Stadia Alidade Smooth Dark":
-      "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",
     "Esri Satellite":
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     "Esri Topographic":
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+    "CartoDB Positron":
+      "https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
+    "CartoDB Dark Matter":
+      "https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png",
   };
 
   const filteredEvents = events.filter((event) => {
@@ -237,6 +235,14 @@ export default function EventMap({
             />
             <span>Límite Municipal</span>
           </label>
+          <label className="flex items-center space-x-2 mt-2">
+            <input
+              type="checkbox"
+              checked={showBarrios}
+              onChange={() => setShowBarrios(!showBarrios)}
+            />
+            <span>Barrios</span>
+          </label>
         </div>
       </div>
 
@@ -262,7 +268,7 @@ export default function EventMap({
         {showBarrios && barriosData && (
           <GeoJSON
             data={barriosData}
-            style={{ color: "green", weight: 1.2, fillColor: "transparent" }}
+            style={{ color: "green", weight: 1.5, fillColor: "transparent" }}
           />
         )}
 

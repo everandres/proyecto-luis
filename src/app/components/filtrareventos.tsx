@@ -1,15 +1,17 @@
-import { useState } from "react";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css"; // Importar los estilos del calendario
+import "react-datepicker/dist/react-datepicker.css";
+import { useState } from "react";
 
 interface FilterEventsProps {
   onFilter: (startDate: Date, endDate: Date) => void;
   onRestoreFilter: () => void;
+  closeFilter?: () => void;
 }
 
 export default function FilterEvents({
   onFilter,
   onRestoreFilter,
+  closeFilter,
 }: FilterEventsProps) {
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
@@ -17,24 +19,32 @@ export default function FilterEvents({
   const handleFilterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (startDate && endDate) {
-      onFilter(startDate, endDate); // Llamamos a onFilter con las fechas seleccionadas
+      onFilter(startDate, endDate);
     }
   };
 
   const handleRestoreFilter = () => {
-    setStartDate(undefined); // Limpiar la fecha de inicio
-    setEndDate(undefined); // Limpiar la fecha de fin
-    onRestoreFilter(); // Llamar a la función externa para restaurar los eventos
+    setStartDate(undefined);
+    setEndDate(undefined);
+    onRestoreFilter();
   };
 
   return (
-    <form onSubmit={handleFilterSubmit} className="space-y-4">
+    <form onSubmit={handleFilterSubmit} className="relative space-y-4 p-4 z-50">
+      <button
+        type="button"
+        onClick={closeFilter}
+        className="absolute top-2 right-2 text-gray-500 hover:text-red-500"
+        aria-label="Cerrar filtro"
+      >
+        ✖
+      </button>
+
       <div className="w-full">
         <label className="block text-sm text-teal-950 font-semibold">
           Seleccionar Rango de Fechas
         </label>
         <div className="flex flex-col space-y-4">
-          {/* Calendario para seleccionar la fecha de inicio */}
           <DatePicker
             selected={startDate}
             onChange={(date: Date | null) => setStartDate(date || undefined)}
@@ -44,8 +54,8 @@ export default function FilterEvents({
             placeholderText="Fecha inicio"
             className="mt-1 block w-full h-full min-w-[200px] border-gray-300 rounded-md shadow-sm"
             dateFormat="yyyy-MM-dd"
+            popperPlacement="bottom-start"
           />
-          {/* Calendario para seleccionar la fecha de fin */}
           <DatePicker
             selected={endDate}
             onChange={(date: Date | null) => setEndDate(date || undefined)}
@@ -56,6 +66,7 @@ export default function FilterEvents({
             placeholderText="Fecha fin"
             className="mt-1 block w-full min-w-[200px] border-gray-300 rounded-md shadow-sm"
             dateFormat="yyyy-MM-dd"
+            popperPlacement="bottom-start"
           />
         </div>
       </div>
@@ -69,7 +80,7 @@ export default function FilterEvents({
 
       <button
         type="button"
-        onClick={handleRestoreFilter} // Llamar a la función que también limpia las fechas
+        onClick={handleRestoreFilter}
         className="bg-red-500 text-white px-4 py-2 ml-2 rounded-md hover:bg-red-700 transition"
       >
         Restaurar Eventos
