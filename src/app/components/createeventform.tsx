@@ -113,6 +113,14 @@ export default function CreateEventForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 p-4 w-full">
+      <button
+        type="button"
+        onClick={closeForm}
+        className="absolute top-2 right-2 text-gray-500 hover:text-red-500"
+        aria-label="Cerrar formulario"
+      >
+        ✖
+      </button>
       {/* Mostrar mensaje de error si lo hay */}
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
@@ -193,15 +201,41 @@ export default function CreateEventForm({
           required
         >
           <option value="">Seleccione una causa</option>
-          <option value="Lluvias intensas">Lluvias intensas</option>
-          <option value="Deslizamiento de tierra">
-            Deslizamiento de tierra
+          <option value="ACCIDENTE">ACCIDENTE</option>
+          <option value="ACCIDENTE AÉREO">ACCIDENTE AÉREO</option>
+          <option value="ACCIDENTE DE TRANSITO">ACCIDENTE DE TRANSITO</option>
+          <option value="ACCIDENTE FLUVIAL">ACCIDENTE FLUVIAL</option>
+          <option value="ACCIDENTE MARITIMO">ACCIDENTE MARITIMO</option>
+          <option value="ACCIDENTE MINERO">ACCIDENTE MINERO</option>
+          <option value="AVALANCHA">AVALANCHA</option>
+          <option value="AVENIDA TORRENCIAL">AVENIDA TORRENCIAL</option>
+          <option value="COLAPSO">COLAPSO</option>
+          <option value="CONTAMINACION">CONTAMINACION</option>
+          <option value="CRECIENTE SUBITA">CRECIENTE SUBITA</option>
+          <option value="DESLIZAMIENTO">DESLIZAMIENTO</option>
+          <option value="DESABASTECIMIENTO DE AGUA">
+            DESABASTECIMIENTO DE AGUA
           </option>
-          <option value="Fracturación de rocas">Fracturación de rocas</option>
-          <option value="Inundación">Inundación</option>
-          <option value="Falla estructural">Falla estructural</option>
-          <option value="Incendio forestal">Incendio forestal</option>
-          <option value="Actividad sísmica">Actividad sísmica</option>
+          <option value="EROSION">EROSION</option>
+          <option value="ERUPCION">ERUPCION</option>
+          <option value="ERUPCION VOLCANICA">ERUPCION VOLCANICA</option>
+          <option value="EXPLOSION">EXPLOSION</option>
+          <option value="FALLA GEOLOGICA">FALLA GEOLOGICA</option>
+          <option value="GRANIZADA">GRANIZADA</option>
+          <option value="HELADA">HELADA</option>
+          <option value="INCENDIO">INCENDIO</option>
+          <option value="INCENDIO ESTRUCTURAL">INCENDIO ESTRUCTURAL</option>
+          <option value="INCENDIO FORESTAL">INCENDIO FORESTAL</option>
+          <option value="INCENDIO VEHICULAR">INCENDIO VEHICULAR</option>
+          <option value="INUNDACION">INUNDACION</option>
+          <option value="MAREJADA">MAREJADA</option>
+          <option value="MOVIMIENTO EN MASA">MOVIMIENTO EN MASA</option>
+          <option value="OTROS">OTROS</option>
+          <option value="REMOCION EN MASA">REMOCION EN MASA</option>
+          <option value="REPRESAMIENTO">REPRESAMIENTO</option>
+          <option value="SISMO">SISMO</option>
+          <option value="TORMENTA ELECTRICA">TORMENTA ELECTRICA</option>
+          <option value="VENDAVAL">VENDAVAL</option>
         </select>
       </div>
 
@@ -300,8 +334,8 @@ export default function CreateEventForm({
           required
         >
           <option value="">Seleccione el tipo de manejo</option>
-          <option value="Local">Local</option>
-          <option value="Distrital">Distrital</option>
+          <option value="Local">Local - Distrital</option>
+          <option value="Departamental">Departamental</option>
           <option value="Nacional">Nacional</option>
           <option value="Internacional">Internacional</option>
           <option value="Privado">Privado</option>

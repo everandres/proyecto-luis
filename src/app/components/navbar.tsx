@@ -7,8 +7,8 @@ export default function Navbar({
   onEventCreated,
   onFilter,
   onRestoreFilter,
-  startDate, // Añadimos startDate
-  endDate, // Añadimos endDate
+  startDate,
+  endDate,
 }: {
   onEventCreated: (lat: number, lng: number) => void;
   onFilter: (startDate: Date, endDate: Date) => void;
@@ -18,38 +18,66 @@ export default function Navbar({
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen); // Cambiar estado para abrir/cerrar el dropdown
+    if (!dropdownOpen) {
+      setFilterDropdownOpen(false); // Cierra el filtro si está abierto
+    }
+    setDropdownOpen(!dropdownOpen);
   };
 
   const toggleFilterDropdown = () => {
-    setFilterDropdownOpen(!filterDropdownOpen); // Cambiar estado para abrir/cerrar el dropdown de filtro
+    if (!filterDropdownOpen) {
+      setDropdownOpen(false); // Cierra el formulario si está abierto
+    }
+    setFilterDropdownOpen(!filterDropdownOpen);
   };
 
-  // Función para cerrar el formulario
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
   const closeForm = () => {
-    setDropdownOpen(false); // Cambia el estado para cerrar el dropdown
+    setDropdownOpen(false);
+  };
+
+  const closeFilterDropdown = () => {
+    setFilterDropdownOpen(false);
   };
 
   return (
-    <nav className="bg-stone-700 p-4 flex justify-between items-center">
-      <div className="flex items-center space-x-3">
-        {/* Imagen al lado del título */}
-        <img
-          src="https://www.santamarta.gov.co/sites/default/files/ciudad_del_buen_v-002_1.png"
-          // src="/logo.png"
-          alt="Logo"
-          className="h-20 w-36"
-        />
-        <h1 className="text-teal-100 text-lg font-semibold">
-          Mapa de emergencias de Santa Marta
-        </h1>
-      </div>
-      <div className="relative">
-        {/* Botón del dropdown de Crear Evento */}
+    <nav className="bg-stone-700 p-4 flex flex-col sm:flex-row justify-between items-center">
+      <div className="flex items-center justify-between w-full sm:w-auto">
+        <div className="flex items-center space-x-3">
+          <img
+            src="https://www.santamarta.gov.co/sites/default/files/ciudad_del_buen_v-002_1.png"
+            alt="Logo"
+            className="h-16 w-28 sm:h-20 sm:w-36"
+          />
+          <h1 className="text-teal-100 text-lg font-semibold">
+            Mapa de emergencias de Santa Marta
+          </h1>
+        </div>
+
+        {/* Icono de menú para pantallas pequeñas */}
         <button
-          className="bg-slate-400 text-white px-4 py-2  hover:bg-cyan-800 transition"
+          onClick={toggleMenu}
+          className="text-teal-100 sm:hidden focus:outline-none"
+        >
+          {menuOpen ? "✖" : "☰"}
+        </button>
+      </div>
+
+      {/* Menú de navegación, se muestra como flex solo en pantallas grandes */}
+      <div
+        className={`${
+          menuOpen ? "block" : "hidden"
+        } sm:flex sm:items-center mt-4 sm:mt-0`}
+      >
+        {/* Botón de Crear Evento */}
+        <button
+          className="bg-slate-400 text-white px-4 py-2 rounded-md hover:bg-cyan-800 transition mr-2"
           onClick={toggleDropdown}
         >
           {dropdownOpen ? "Cerrar formulario" : "Crear Evento"}
@@ -57,7 +85,7 @@ export default function Navbar({
 
         {/* Dropdown con el formulario */}
         {dropdownOpen && (
-          <div className="absolute right-0 mt-2 w-96 max-h-[80vh] overflow-y-auto bg-white p-4 rounded-xl shadow-2xl border border-gray-200 z-50 transition-transform transform-gpu duration-300 ease-in-out">
+          <div className="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 w-11/12 max-w-md max-h-[80vh] overflow-y-auto bg-white p-4 rounded-xl shadow-2xl border border-gray-200 z-50">
             <CreateEventForm
               onEventCreated={onEventCreated}
               closeForm={closeForm}
@@ -65,26 +93,31 @@ export default function Navbar({
           </div>
         )}
 
-        {/* Botón del dropdown de Filtrar Eventos */}
+        {/* Botón de Filtrar Eventos */}
         <button
-          className="ml-4 bg-green-700 text-white px-4 py-2  hover:bg-cyan-900 transition"
+          className="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-cyan-900 transition mr-2"
           onClick={toggleFilterDropdown}
         >
           {filterDropdownOpen ? "Cerrar filtro" : "Filtrar Eventos"}
         </button>
 
-        {/* Dropdown para aplicar filtros */}
+        {/* Dropdown para el filtro */}
         {filterDropdownOpen && (
-          <div className="absolute right-0 mt-2 w-full min-w-[400px] max-w-md max-h-[80vh] overflow-y-auto bg-white p-6 rounded-md shadow-lg z-50">
-            <FilterEvents
-              onFilter={onFilter}
-              onRestoreFilter={onRestoreFilter}
-            />
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-25 z-50">
+            <div className="relative w-11/12 max-w-md h-1/2 bg-white p-6 rounded-md shadow-lg overflow-y-auto">
+              <FilterEvents
+                onFilter={onFilter}
+                onRestoreFilter={onRestoreFilter}
+                closeFilter={closeFilterDropdown} // Pasa la función para cerrar
+              />
+            </div>
           </div>
         )}
 
-        {/* Botón para descargar información en CSV */}
-        <DownloadCSVButton startDate={startDate} endDate={endDate} />
+        {/* Botón para descargar CSV */}
+        <div className="mt-2 sm:mt-0">
+          <DownloadCSVButton startDate={startDate} endDate={endDate} />
+        </div>
       </div>
     </nav>
   );
