@@ -201,7 +201,7 @@ export default function EventMap({
   return (
     <div className="h-screen w-full relative">
       {/* Selector de Mapa Base */}
-      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 sm:left-4 sm:transform-none z-[1000] bg-white p-3 rounded-lg shadow-lg w-10/12 sm:w-auto max-w-sm">
+      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 sm:left-4 sm:transform-none z-[1000] bg-white bg-opacity-40 p-3 rounded-lg shadow-lg w-10/12 sm:w-auto max-w-sm">
         <label className="text-sm font-semibold">Seleccionar Mapa Base:</label>
         <select
           className="mt-1 p-2 border rounded w-full"
@@ -217,8 +217,8 @@ export default function EventMap({
       </div>
 
       {/* Controles para activar/desactivar capas */}
-      <div className="fixed bottom-40 left-1/2 transform -translate-x-1/2 sm:left-4 sm:transform-none z-[1000] bg-white p-3 rounded-lg shadow-lg w-10/12 sm:w-auto max-w-sm">
-        <label className="text-sm font-semibold mb-2">Capas GeoJSON:</label>
+      <div className="fixed bottom-40 left-1/2 transform -translate-x-1/2 sm:left-4 sm:transform-none z-[1000] bg-white bg-opacity-40 p-3 rounded-lg shadow-lg w-10/12 sm:w-auto max-w-sm">
+        <label className="text-sm font-semibold mb-2">Capas:</label>
         <div className="flex flex-col">
           <label className="flex items-center space-x-2">
             <input
