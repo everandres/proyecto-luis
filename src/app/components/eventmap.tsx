@@ -93,12 +93,10 @@ export default function EventMap({
   endDate: Date | null;
 }) {
   const { events, loading, error, removeEvent } = useEventContext();
-
   const [selectedTileMap, setSelectedTileMap] = useState(
     "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
   );
 
-  // Estados para almacenar los datos GeoJSON y controlar visibilidad
   const [localidadesData, setLocalidadesData] = useState(null);
   const [limiteMunicipalData, setLimiteMunicipalData] = useState(null);
   const [barriosData, setBarriosData] = useState(null);
@@ -106,7 +104,9 @@ export default function EventMap({
   const [showLocalidades, setShowLocalidades] = useState(false);
   const [showLimiteMunicipal, setShowLimiteMunicipal] = useState(true);
 
-  // Cargar los datos de GeoJSON desde la carpeta pública
+  const [isMapBaseOpen, setIsMapBaseOpen] = useState(false);
+  const [isLayersOpen, setIsLayersOpen] = useState(false);
+
   useEffect(() => {
     fetch("/localidades.geojson")
       .then((response) => response.json())
@@ -200,51 +200,70 @@ export default function EventMap({
 
   return (
     <div className="h-screen w-full relative">
-      {/* Selector de Mapa Base */}
-      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 sm:left-4 sm:transform-none z-[1000] bg-white bg-opacity-40 p-3 rounded-lg shadow-lg w-10/12 sm:w-auto max-w-sm">
-        <label className="text-sm font-semibold">Seleccionar Mapa Base:</label>
-        <select
-          className="mt-1 p-2 border rounded w-full"
-          value={selectedTileMap}
-          onChange={(e) => setSelectedTileMap(e.target.value)}
+      {/* Selector de Mapa Base desplegable */}
+      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 sm:left-4 sm:transform-none z-[1001] bg-white bg-opacity-40 p-3 rounded-lg shadow-lg w-10/12 sm:w-auto max-w-sm">
+        <button
+          onClick={() => setIsMapBaseOpen(!isMapBaseOpen)}
+          className="w-full text-left text-sm font-semibold p-2 bg-gray-300 bg-opacity-40 rounded-lg"
         >
-          {Object.entries(tileMaps).map(([name, url]) => (
-            <option key={name} value={url}>
-              {name}
-            </option>
-          ))}
-        </select>
+          Seleccionar Mapa Base
+        </button>
+        {isMapBaseOpen && (
+          <div className="mt-2">
+            <select
+              className="mt-1 p-2 border rounded w-full"
+              value={selectedTileMap}
+              onChange={(e) => setSelectedTileMap(e.target.value)}
+            >
+              {Object.entries(tileMaps).map(([name, url]) => (
+                <option key={name} value={url}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
-      {/* Controles para activar/desactivar capas */}
-      <div className="fixed bottom-40 left-1/2 transform -translate-x-1/2 sm:left-4 sm:transform-none z-[1000] bg-white bg-opacity-40 p-3 rounded-lg shadow-lg w-10/12 sm:w-auto max-w-sm">
-        <label className="text-sm font-semibold mb-2">Capas:</label>
-        <div className="flex flex-col">
-          <label className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              checked={showLocalidades}
-              onChange={() => setShowLocalidades(!showLocalidades)}
-            />
-            <span>Localidades</span>
-          </label>
-          <label className="flex items-center space-x-2 mt-2">
-            <input
-              type="checkbox"
-              checked={showLimiteMunicipal}
-              onChange={() => setShowLimiteMunicipal(!showLimiteMunicipal)}
-            />
-            <span>Límite Municipal</span>
-          </label>
-          <label className="flex items-center space-x-2 mt-2">
-            <input
-              type="checkbox"
-              checked={showBarrios}
-              onChange={() => setShowBarrios(!showBarrios)}
-            />
-            <span>Barrios</span>
-          </label>
-        </div>
+      {/* Controles para activar/desactivar capas desplegable */}
+      <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 sm:left-4 sm:transform-none z-[1000] bg-white bg-opacity-40 p-3 rounded-lg shadow-lg w-10/12 sm:w-auto max-w-sm">
+        <button
+          onClick={() => setIsLayersOpen(!isLayersOpen)}
+          className="w-full text-left text-sm font-semibold p-2 bg-gray-300 bg-opacity-40 rounded-lg"
+        >
+          Capas
+        </button>
+        {isLayersOpen && (
+          <div className="mt-2">
+            <label className="text-sm font-semibold mb-2">Capas:</label>
+            <div className="flex flex-col">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={showLocalidades}
+                  onChange={() => setShowLocalidades(!showLocalidades)}
+                />
+                <span>Localidades</span>
+              </label>
+              <label className="flex items-center space-x-2 mt-2">
+                <input
+                  type="checkbox"
+                  checked={showLimiteMunicipal}
+                  onChange={() => setShowLimiteMunicipal(!showLimiteMunicipal)}
+                />
+                <span>Límite Municipal</span>
+              </label>
+              <label className="flex items-center space-x-2 mt-2">
+                <input
+                  type="checkbox"
+                  checked={showBarrios}
+                  onChange={() => setShowBarrios(!showBarrios)}
+                />
+                <span>Barrios</span>
+              </label>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Contenedor del Mapa */}
