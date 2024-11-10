@@ -50,13 +50,8 @@ export default function Navbar({
     <nav className="bg-gray-700 p-4 flex flex-col sm:flex-row justify-between items-center">
       <div className="flex items-center justify-between w-full sm:w-auto">
         <div className="flex items-center space-x-3">
-          <img
-            src="https://www.santamarta.gov.co/sites/default/files/ciudad_del_buen_v-002_1.png"
-            alt="Logo"
-            className="h-16 w-28 sm:h-20 sm:w-36"
-          />
-          <h1 className="text-teal-100 text-lg font-semibold">
-            Mapa de emergencias de Santa Marta
+          <h1 className="text-white text-lg font-semibold">
+            Mapa Interactivo de Eventos de Emergencias en Santa Marta
           </h1>
         </div>
 

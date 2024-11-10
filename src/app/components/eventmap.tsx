@@ -200,6 +200,14 @@ export default function EventMap({
 
   return (
     <div className="h-screen w-full relative">
+      {/* Logo sobre el mapa */}
+      <div className="absolute top-0 right-0 z-[500] opacity-80 pointer-events-none">
+        <img
+          src="/logo.png"
+          alt="Logo"
+          className="w-[30vw] h-auto max-w-xs md:max-w-sm lg:max-w-md"
+        />
+      </div>
       {/* Selector de Mapa Base */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 sm:left-4 sm:transform-none z-[1000] bg-white p-3 sm:rounded shadow-lg w-11/12 sm:w-auto max-w-sm">
         <label className="text-sm font-semibold">Seleccionar Mapa Base:</label>
@@ -248,7 +256,12 @@ export default function EventMap({
       </div>
 
       {/* Contenedor del Mapa */}
-      <MapContainer center={center} zoom={zoom} className="h-full w-full">
+      <MapContainer
+        center={center}
+        zoom={zoom}
+        className="h-full w-full"
+        zoomControl={false}
+      >
         <TileLayer url={selectedTileMap} />
 
         <SetMapCenter lat={center.lat} lng={center.lng} zoom={zoom} />
