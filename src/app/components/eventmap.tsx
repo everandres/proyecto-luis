@@ -200,10 +200,11 @@ export default function EventMap({
 
   return (
     <div className="h-screen w-full relative">
-      <div className="absolute bottom-4 left-4 z-[1000] bg-white p-3 rounded shadow-lg">
+      {/* Selector de Mapa Base */}
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 sm:left-4 sm:transform-none z-[1000] bg-white p-3 sm:rounded shadow-lg w-11/12 sm:w-auto max-w-sm">
         <label className="text-sm font-semibold">Seleccionar Mapa Base:</label>
         <select
-          className="mt-1 p-1 border rounded w-full"
+          className="mt-1 p-2 border rounded w-full"
           value={selectedTileMap}
           onChange={(e) => setSelectedTileMap(e.target.value)}
         >
@@ -216,7 +217,7 @@ export default function EventMap({
       </div>
 
       {/* Controles para activar/desactivar capas */}
-      <div className="absolute bottom-40 left-4 z-[1000] bg-white p-3 rounded shadow-lg">
+      <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 sm:left-4 sm:transform-none z-[1000] bg-white p-3 sm:rounded shadow-lg w-11/12 sm:w-auto max-w-sm">
         <label className="text-sm font-semibold mb-2">Capas GeoJSON:</label>
         <div className="flex flex-col">
           <label className="flex items-center space-x-2">
@@ -246,6 +247,7 @@ export default function EventMap({
         </div>
       </div>
 
+      {/* Contenedor del Mapa */}
       <MapContainer center={center} zoom={zoom} className="h-full w-full">
         <TileLayer url={selectedTileMap} />
 

@@ -47,7 +47,7 @@ export default function Navbar({
   };
 
   return (
-    <nav className="bg-stone-700 p-4 flex flex-col sm:flex-row justify-between items-center">
+    <nav className="bg-gray-700 p-4 flex flex-col sm:flex-row justify-between items-center">
       <div className="flex items-center justify-between w-full sm:w-auto">
         <div className="flex items-center space-x-3">
           <img
@@ -77,7 +77,7 @@ export default function Navbar({
       >
         {/* Botón de Crear Evento */}
         <button
-          className="bg-slate-400 text-white px-4 py-2 rounded-md hover:bg-cyan-800 transition mr-2"
+          className="bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-cyan-800 transition mr-2"
           onClick={toggleDropdown}
         >
           {dropdownOpen ? "Cerrar formulario" : "Crear Evento"}
@@ -95,7 +95,7 @@ export default function Navbar({
 
         {/* Botón de Filtrar Eventos */}
         <button
-          className="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-cyan-900 transition mr-2"
+          className="bg-orange-700 text-white px-4 py-2 rounded-md hover:bg-yellow-900 transition mr-2"
           onClick={toggleFilterDropdown}
         >
           {filterDropdownOpen ? "Cerrar filtro" : "Filtrar Eventos"}

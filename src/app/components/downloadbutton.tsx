@@ -85,7 +85,7 @@ export default function DownloadCSVButton({
     <button
       type="button"
       onClick={handleDownloadCSV} // Función para descargar el archivo CSV
-      className="bg-emerald-500 text-white px-4 py-2 ml-2 rounded-md hover:bg-cyan-900 transition"
+      className="bg-green-700 text-white px-4 py-2 ml-2 rounded-md hover:bg-green-800 transition"
     >
       Descargar Eventos
     </button>
