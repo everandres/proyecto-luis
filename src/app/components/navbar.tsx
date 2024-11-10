@@ -51,7 +51,7 @@ export default function Navbar({
       <div className="flex items-center justify-between w-full sm:w-auto">
         <div className="flex items-center space-x-3">
           <h1 className="text-white text-lg font-semibold">
-            Mapa Interactivo de Eventos de Emergencias en Santa Marta
+            Mapa de Eventos de Emergencias en Santa Marta
           </h1>
         </div>
 

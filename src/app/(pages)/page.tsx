@@ -49,9 +49,9 @@ const Page: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full">
-      {/* Navbar con z-index alto para que esté sobre el mapa */}
-      <div className="relative z-50">
+    <div className="relative min-h-screen w-full flex flex-col">
+      {/* Navbar con z-index alto y diseño flexible */}
+      <div className="relative z-50 w-full">
         <Navbar
           onEventCreated={handleEventCreated}
           onFilter={handleFilter}
@@ -64,21 +64,31 @@ const Page: React.FC = () => {
       {/* Mostrar la tarjeta de éxito si existe un mensaje */}
       {successMessage && <SuccessCard message={successMessage} />}
 
-      {loading ? (
-        <p className="absolute z-40">Cargando eventos...</p>
-      ) : error ? (
-        <p className="absolute z-40">Error al cargar los eventos: {error}</p>
-      ) : (
-        <div className="absolute top-0 left-0 w-full h-full z-0">
-          {/* Pasamos las coordenadas al mapa */}
-          <EventMap
-            center={mapCenter}
-            zoom={mapZoom}
-            startDate={startDate} // Pasamos la fecha de inicio
-            endDate={endDate} // Pasamos la fecha de fin
-          />
-        </div>
-      )}
+      <div className="relative flex-1">
+        {loading ? (
+          <p className="absolute z-40">Cargando eventos...</p>
+        ) : error ? (
+          <p className="absolute z-40">Error al cargar los eventos: {error}</p>
+        ) : (
+          <div className="absolute top-0 left-0 w-full h-full z-0">
+            <EventMap
+              center={mapCenter}
+              zoom={mapZoom}
+              startDate={startDate} // Pasamos la fecha de inicio
+              endDate={endDate} // Pasamos la fecha de fin
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Logo sobre el mapa */}
+      <div className="absolute top-20 right-0 z-[1] opacity-80 pointer-events-none">
+        <img
+          src="/logo.png"
+          alt="Logo"
+          className="w-[30vw] h-auto max-w-xs md:max-w-sm lg:max-w-md"
+        />
+      </div>
     </div>
   );
 };
